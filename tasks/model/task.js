@@ -2,8 +2,6 @@ module.exports = (sequelize, DataTypes) => {
   const Task_details = sequelize.define(
     "Task_details",
     {
-      // Model attributes are defined here
-
       UserId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -18,8 +16,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  // `sequelize.define` also returns the model
-
-  console.log(Task_details === sequelize.models.Task_details); // true
+  console.log(Task_details === sequelize.models.Task_details);
   return Task_details;
 };

@@ -28,6 +28,7 @@ const addtask = async (req, res) => {
   const id = parseInt(req.params.id);
 
   const { task } = req.body;
+
   if (!task) {
     res.status(200).json({ message: "Task Cant Be Empty" });
   }
@@ -54,4 +55,53 @@ const addtask = async (req, res) => {
     message: `Task Added To DB `,
   });
 };
-module.exports = { taskbyid, addtask };
+
+const deletetask = async (req, res) => {
+  const { task } = req.body;
+  if (!task) {
+    res.status(200).json({ message: "Task Cant Be Empty" });
+  } else {
+    const id = parseInt(req.params.id);
+    for (let i = 0; i < task.length; i++) {
+      const deletetask = await task_details.destroy({
+        where: { task: task[i], UserId: id },
+      });
+    }
+    res.status(200).json({
+      message: `Task Removed To DB `,
+    });
+  }
+};
+
+const updatetask = async (req, res) => {
+  const { old_task, new_task } = req.body;
+  if (!old_task || !new_task) {
+    res.json({ Message: "Please Enter all the Details" });
+  }
+  const user_id = parseInt(req.params.id);
+  const tasks = await task_details.update(
+    { task: new_task },
+    {
+      where: {
+        task: old_task,
+      },
+    }
+  );
+
+  res.status(200).json({
+    message: `Task Updated `,
+  });
+};
+
+const deletealltask = async (req, res) => {
+  const user_id = parseInt(req.params.id);
+
+  const deletetask = await task_details.destroy({
+    where: { UserId: user_id },
+  });
+
+  res.status(200).json({
+    message: `All the Tasks of User ID :- ${user_id} are Removed From DB `,
+  });
+};
+module.exports = { taskbyid, addtask, deletetask, updatetask, deletealltask };
