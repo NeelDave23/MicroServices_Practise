@@ -1,15 +1,15 @@
 const express = require("express");
 const app = express();
-const axios = require("axios");
 require("./model/db");
-const router = require("./routes/route");
+const router = require("./routes/routes");
 const bodyParser = require("body-parser");
 let cookieParser = require("cookie-parser");
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/", router);
 
-app.listen(3000, () => {
-  console.log("Orders. Port :- 3000");
+app.listen(3001, () => {
+  console.log("Profile. Port :- 3001");
 });

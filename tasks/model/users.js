@@ -2,7 +2,6 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     "User",
     {
-      // Model attributes are defined here
       name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -29,8 +28,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  // `sequelize.define` also returns the model
-
-  console.log(User === sequelize.models.User); // true
+  console.log(User === sequelize.models.User);
   return User;
 };

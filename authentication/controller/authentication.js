@@ -4,15 +4,68 @@ const task_details = db.task_details;
 const bcrypt = require("bcrypt");
 const sequelize = db.sequelize;
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const postsignup = async (req, res) => {
   let { name, email, password, password1 } = req.body;
+  if (!name || !email || !password || !password1) {
+    res.status(200).json({ Message: "Please Enter All the details" });
+  } else {
+    if (password != password1) {
+      res
+        .status(200)
+        .json({ message: "Password and Conform Password Must Be Same" });
+    } else {
+      const valid = await User.findOne({
+        where: {
+          email: email,
+        },
+      });
 
-  if (password != password1) {
-    res
-      .status(200)
-      .json({ message: "Password and Conform Password Must Be Same" });
-    // res.render("message", { msg: msg });
+      if (valid) {
+        res
+          .status(200)
+          .json({ message: "Email is already Register, Please Login" });
+      } else {
+        let hash = await bcrypt.hash(password, 10);
+
+        const user = await User.create({
+          name: name,
+          email: email,
+          password: hash,
+        });
+
+        const tasks = await User.update(
+          { lastLogin: sequelize.literal("CURRENT_TIMESTAMP") },
+          {
+            where: {
+              id: user.id,
+            },
+          }
+        );
+        let userData = {
+          user_id: user.id,
+          name: user.name,
+        };
+
+        let token = jwt.sign(userData, process.env.TOKEN_PASS);
+        res.cookie("userData", token);
+        res.status(200).json({
+          name: user.name,
+          email: user.email,
+          tasks: "",
+          task_count: 0,
+          user_id: user.id,
+        });
+      }
+    }
+  }
+};
+
+const postlogin = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(200).json({ Message: "Please Enter All the details" });
   } else {
     const valid = await User.findOne({
       where: {
@@ -20,92 +73,53 @@ const postsignup = async (req, res) => {
       },
     });
 
-    if (valid) {
+    if (!valid) {
       res
         .status(200)
-        .json({ message: "Email is already Register, Please Login" });
-      // res.render("message", { msg: msg });
+        .json({ message: "Email is not Register, Please Sign Up" });
     } else {
-      let hash = await bcrypt.hash(password, 10);
-
-      const user = await User.create({
-        name: name,
-        email: email,
-        password: hash,
-      });
-
-      const tasks = await User.update(
-        { lastLogin: sequelize.literal("CURRENT_TIMESTAMP") },
-        {
-          where: {
-            id: user.id,
-          },
-        }
-      );
-      let userData = {
-        user_id: user.id,
-        name: user.name,
-      };
-
-      let token = jwt.sign(userData, "123_pass");
-      res.cookie("userData", token);
-
-      res.status(200).redirect(`/orders/${user.id}`);
-    }
-  }
-};
-
-const postlogin = async (req, res) => {
-  const { email, password } = req.body;
-
-  const valid = await User.findOne({
-    where: {
-      email: email,
-    },
-  });
-
-  if (!valid) {
-    let msg = "Email is not Register, Please Sign Up";
-    res.status(200).json({ message: "Email is not Register, Please Sign Up" });
-    // res.render("message", { msg: msg });
-  } else {
-    bcrypt.compare(password, valid.password, async (err, isMatch) => {
-      if (err) {
-        throw err;
-      } else {
-        if (!isMatch) {
-          let msg = "Wrong Email or Password";
-          res.status(200).json({ message: "Wrong Email or Password" });
-          // res.render("message", { msg: msg });
+      bcrypt.compare(password, valid.password, async (err, isMatch) => {
+        if (err) {
+          throw err;
         } else {
-          const task = await task_details.findAll({
-            where: { UserId: valid.id },
-          });
-          let all_task = [];
-          for (let i = 0; i < task.length; i++) {
-            all_task.push(task[i].task);
-          }
-
-          const tasks = await User.update(
-            { lastLogin: sequelize.literal("CURRENT_TIMESTAMP") },
-            {
-              where: {
-                id: valid.id,
-              },
-              silent: true,
+          if (!isMatch) {
+            res.status(200).json({ message: "Wrong Email or Password" });
+          } else {
+            const task = await task_details.findAll({
+              where: { UserId: valid.id },
+            });
+            let all_task = [];
+            for (let i = 0; i < task.length; i++) {
+              all_task.push(task[i].task);
             }
-          );
-          let userData = {
-            user_id: valid.id,
-            name: valid.name,
-          };
 
-          let token = jwt.sign(userData, "123_pass");
-          res.cookie("userData", token);
-          res.status(200).redirect(`/orders/${valid.id}`);
+            const tasks = await User.update(
+              { lastLogin: sequelize.literal("CURRENT_TIMESTAMP") },
+              {
+                where: {
+                  id: valid.id,
+                },
+                silent: true,
+              }
+            );
+            let userData = {
+              user_id: valid.id,
+              name: valid.name,
+            };
+
+            let token = jwt.sign(userData, process.env.TOKEN_PASS);
+            res.cookie("userData", token);
+            res.status(200).json({
+              name: valid.name,
+              email: email,
+              tasks: all_task,
+              task_count: task.length,
+              user_id: valid.id,
+            });
+          }
         }
-      }
-    });
+      });
+    }
   }
 };
 module.exports = { postsignup, postlogin };
