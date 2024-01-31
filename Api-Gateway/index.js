@@ -14,6 +14,6 @@ for (const route in routes) {
   app.use(route, createProxyMiddleware({ target }));
 }
 
-app.listen(8000, () => {
-  console.log(" Port :- 8000");
+app.listen(process.env.PORT, () => {
+  console.log(` Port :- ${process.env.PORT}`);
 });

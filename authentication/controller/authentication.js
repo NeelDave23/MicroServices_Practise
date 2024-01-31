@@ -7,11 +7,15 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const postsignup = async (req, res) => {
-  let { name, email, password, password1 } = req.body;
-  if (!name || !email || !password || !password1) {
+  let { name, email, password, conform_password } = req.body;
+  if (JSON.stringify(req.body) === "{}") {
+    res.status(200).json({
+      Message: "Please enter name, email, password, and conform password",
+    });
+  } else if (!name || !email || !password || !conform_password) {
     res.status(200).json({ Message: "Please Enter All the details" });
   } else {
-    if (password != password1) {
+    if (password != conform_password) {
       res
         .status(200)
         .json({ message: "Password and Conform Password Must Be Same" });
@@ -64,7 +68,10 @@ const postsignup = async (req, res) => {
 
 const postlogin = async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
+
+  if (JSON.stringify(req.body) === "{}") {
+    res.status(200).json({ Message: "Please Enter email and password" });
+  } else if (!email || !password) {
     res.status(200).json({ Message: "Please Enter All the details" });
   } else {
     const valid = await User.findOne({
