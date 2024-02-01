@@ -32,22 +32,29 @@ const addtask = async (req, res) => {
   if (!task) {
     res.status(200).json({ message: "Task Cant Be Empty" });
   }
-  const user = await task_details.findOne({
-    where: {
-      task: task,
-    },
-  });
-  if (user) {
-    res.status(200).json({ message: "Task Already Present in DB " });
-  } else {
-    const tasks = await task_details.create({
-      UserId: id,
-      task: task,
+  let flag = 0;
+  for (let i = 0; i < task.length; i++) {
+    const user = await task_details.findOne({
+      where: {
+        task: task[i],
+        UserId: id,
+      },
     });
-
-    res.status(200).json({
-      message: `Task Added To DB `,
-    });
+    if (user) {
+      flag = 1;
+      res
+        .status(200)
+        .json({ message: `Task :- '${task[i]}' Already Present in DB ` });
+      break;
+    } else {
+      const tasks = await task_details.create({
+        UserId: id,
+        task: task[i],
+      });
+    }
+  }
+  if (flag == 0) {
+    res.status(200).json({ message: `Task Added In DB ` });
   }
 };
 

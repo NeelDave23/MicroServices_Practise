@@ -60,7 +60,7 @@ const login = async (req, res) => {
 };
 
 const viewuser = async (req, res) => {
-  const user_id = parseInt(req.params.id);
+  const user_id = Number(req.params.id);
   const user = await User.findOne({
     where: {
       id: user_id,
@@ -81,6 +81,7 @@ const viewuser = async (req, res) => {
     for (let i = 0; i < count; i++) {
       all_task.push(rows[i].task);
     }
+
     res.status(200).json({
       user_id: user_id,
       name: user.name,
@@ -95,19 +96,30 @@ const viewuser = async (req, res) => {
 };
 
 const deleteuser = async (req, res) => {
-  const user_id = parseInt(req.params.id);
-
-  const deleteuser = await User.destroy({
-    where: { id: user_id },
-  });
-  if (!deleteuser) {
+  const { user_id } = req.body;
+  if (!user_id) {
     res.status(200).json({
-      Message: "User Not Found in DB",
+      Message: `Please Provide the User ID that you want to delete`,
     });
   } else {
-    res.status(200).json({
-      Message: "User is Deleted From DB",
-    });
+    let flag = 0;
+    for (let i = 0; i < user_id.length; i++) {
+      const deleteuser = await User.destroy({
+        where: { id: user_id[i] },
+      });
+      if (!deleteuser) {
+        res.status(200).json({
+          Message: `User having ID :- ${user_id[i]} is Not Found in DB`,
+        });
+        flag = 1;
+        break;
+      }
+    }
+    if (flag == 0) {
+      res.status(200).json({
+        Message: `User having ID :- ${user_id}  Deleted From DB`,
+      });
+    }
   }
 };
 const deletealluser = async (req, res) => {
@@ -160,23 +172,27 @@ const deletealltask = async (req, res) => {
   });
 
   if (!deletetask) {
-    res.status(200).json({
+    res.json({
       Message: `No tasks are there in DB of User ID :- ${user_id}`,
     });
+  } else {
+    res.status(200).json({
+      message: `All the Tasks of User ID :- ${user_id} are Deleted `,
+    });
   }
-  res.status(200).json({
-    message: `All the Tasks of User ID :- ${user_id} are Deleted `,
-  });
 };
 
-const removealltask = async (req, res) => {
-  const deletetask = await task_details.destroy({
-    where: {},
-  });
-
-  res.status(200).json({
-    message: `All the tasks are Deleted  `,
-  });
+const deleteAllTasks = async (req, res) => {
+  const deletetask = await task_details.destroy({ where: {} });
+  if (!deletetask) {
+    res.status(200).json({
+      message: `No Task Present in DB  `,
+    });
+  } else {
+    res.status(200).json({
+      message: `All the tasks are Deleted  `,
+    });
+  }
 };
 module.exports = {
   login,
@@ -185,5 +201,5 @@ module.exports = {
   deletealluser,
   deletetask,
   deletealltask,
-  removealltask,
+  deleteAllTasks,
 };
