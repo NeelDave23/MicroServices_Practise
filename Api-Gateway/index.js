@@ -10,10 +10,15 @@ const routes = {
 };
 
 for (const route in routes) {
-  const target = routes[route];
-  app.use(route, createProxyMiddleware({ target }));
+  try {
+    const target = routes[route];
+    app.use(route, createProxyMiddleware({ target }));
+  } catch (e) {
+    // throw e;
+    console.log(e);
+  }
 }
 
-app.listen(8000, () => {
-  console.log(" Port :- 8000");
+app.listen(process.env.PORT, () => {
+  console.log(` Port :- ${process.env.PORT}`);
 });
