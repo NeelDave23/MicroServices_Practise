@@ -10,7 +10,7 @@ require("dotenv").config();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
-app.use("/", router);
+app.use("/orders", router);
 
 app.listen(process.env.PORT, () => {
   console.log(` Port :- ${process.env.PORT}`);
