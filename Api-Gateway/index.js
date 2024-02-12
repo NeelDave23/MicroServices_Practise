@@ -8,7 +8,9 @@ const routes = {
   "/profile": process.env.PROFILE,
   "/users": process.env.USERS,
 };
-
+app.get("/", (req, res) => {
+  res.send("Home");
+});
 for (const route in routes) {
   try {
     const target = routes[route];
