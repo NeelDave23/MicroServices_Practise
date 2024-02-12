@@ -7,7 +7,7 @@ require("dotenv").config();
 const deleteuser = async (req, res) => {
   const { user_id } = req.body;
   if (!user_id) {
-    res.status(200).json({
+    res.status(400).json({
       Message: `Please Provide the User ID that you want to delete`,
     });
   } else {
@@ -17,7 +17,7 @@ const deleteuser = async (req, res) => {
         where: { id: user_id[i] },
       });
       if (!deleteuser) {
-        res.status(200).json({
+        res.status(400).json({
           Message: `User having ID :- ${user_id[i]} is Not Found in DB`,
         });
         flag = 1;

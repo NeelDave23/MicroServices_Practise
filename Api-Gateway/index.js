@@ -16,8 +16,7 @@ for (const route in routes) {
     const target = routes[route];
     app.use(route, createProxyMiddleware({ target }));
   } catch (e) {
-    // throw e;
-    console.log(e);
+    throw e;
   }
 }
 

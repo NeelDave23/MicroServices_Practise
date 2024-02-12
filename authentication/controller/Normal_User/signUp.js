@@ -8,15 +8,15 @@ require("dotenv").config();
 const postsignup = async (req, res) => {
   let { name, email, password, confirm_password } = req.body;
   if (JSON.stringify(req.body) === "{}") {
-    res.status(200).json({
+    res.status(400).json({
       Message: "Please enter name, email, password, and confirm password",
     });
   } else if (!name || !email || !password || !confirm_password) {
-    res.status(200).json({ Message: "Please Enter All the details" });
+    res.status(400).json({ Message: "Please Enter All the details" });
   } else {
     if (password != confirm_password) {
       res
-        .status(200)
+        .status(400)
         .json({ message: "Password and Confirm Password Must Be Same" });
     } else {
       const valid = await User.findOne({
@@ -27,7 +27,7 @@ const postsignup = async (req, res) => {
 
       if (valid) {
         res
-          .status(200)
+          .status(401)
           .json({ message: "Email is already Register, Please Login" });
       } else {
         let hash = await bcrypt.hash(password, 10);
@@ -53,7 +53,7 @@ const postsignup = async (req, res) => {
 
         let token = jwt.sign(userData, process.env.TOKEN_PASS);
         res.cookie("userData", token);
-        res.status(200).json({
+        res.status(201).json({
           name: user.name,
           email: user.email,
           tasks: "",

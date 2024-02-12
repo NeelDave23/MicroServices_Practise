@@ -7,7 +7,7 @@ const addtask = async (req, res) => {
   const { task } = req.body;
 
   if (!task) {
-    res.status(200).json({ message: "Task Cant Be Empty" });
+    res.status(400).json({ message: "Task Cant Be Empty" });
   }
   let flag = 0;
   for (let i = 0; i < task.length; i++) {
@@ -20,7 +20,7 @@ const addtask = async (req, res) => {
     if (user) {
       flag = 1;
       res
-        .status(200)
+        .status(400)
         .json({ message: `Task :- '${task[i]}' Already Present in DB ` });
       break;
     } else {

@@ -54,7 +54,7 @@ const login = async (req, res) => {
         all_usersbyid: all_usersbyid,
       });
     } else {
-      res.status(200).json({ Message: "Wrong Email or Password" });
+      res.status(401).json({ Message: "Wrong Email or Password" });
     }
   }
 };

@@ -11,7 +11,7 @@ const profile = async (req, res) => {
     },
   });
   if (!user) {
-    res.status(200).json({
+    res.status(404).json({
       Message: "User Not Found in DB",
     });
   } else {

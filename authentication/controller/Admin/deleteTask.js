@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const deletetask = async (req, res) => {
-  const { task_id } = req.body;
   const user_id = parseInt(req.params.id);
   const user = await User.findOne({
     where: {
@@ -13,21 +12,26 @@ const deletetask = async (req, res) => {
     },
   });
   if (!user) {
-    res.status(200).json({
+    res.status(400).json({
       Message: "User Not Found in DB",
     });
   } else {
-    const deletetask = await task_details.destroy({
-      where: { id: task_id },
-    });
-    if (!deletetask) {
-      res.status(200).json({
-        Message: "Task Not Found ",
-      });
+    const { task_id } = req.body;
+    if (!task_id) {
+      res.status(400).json({ Message: "Please Enter the Task ID" });
     } else {
-      res.status(200).json({
-        message: `Task is Deleted `,
+      const deletetask = await task_details.destroy({
+        where: { id: task_id },
       });
+      if (!deletetask) {
+        res.status(404).json({
+          Message: "Task Not Found ",
+        });
+      } else {
+        res.status(200).json({
+          message: `Task is Deleted `,
+        });
+      }
     }
   }
 };

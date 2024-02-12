@@ -8,7 +8,7 @@ const deletealltask = async (req, res) => {
     where: { UserId: user_id },
   });
   if (!deletetask) {
-    res.status(200).json({
+    res.status(400).json({
       message: `No Tasks of User ID :- ${user_id} are present in DB `,
     });
   } else {

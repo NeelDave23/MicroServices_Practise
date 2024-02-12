@@ -11,7 +11,7 @@ const deletealltask = async (req, res) => {
   });
 
   if (!deletetask) {
-    res.json({
+    res.status(404).json({
       Message: `No tasks are there in DB of User ID :- ${user_id}`,
     });
   } else {

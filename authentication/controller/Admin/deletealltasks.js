@@ -7,7 +7,7 @@ require("dotenv").config();
 const deleteAllTasks = async (req, res) => {
   const deletetask = await task_details.destroy({ where: {} });
   if (!deletetask) {
-    res.status(200).json({
+    res.status(400).json({
       message: `No Task Present in DB  `,
     });
   } else {

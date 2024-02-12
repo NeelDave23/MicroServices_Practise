@@ -9,7 +9,7 @@ const deletealluser = async (req, res) => {
     where: {},
   });
   if (!deleteuser) {
-    res.status(200).json({
+    res.status(400).json({
       Message: "No Users Present in DB  ",
     });
   } else {

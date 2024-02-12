@@ -10,9 +10,9 @@ const postlogin = async (req, res) => {
   const { email, password } = req.body;
 
   if (JSON.stringify(req.body) === "{}") {
-    res.status(200).json({ Message: "Please Enter email and password" });
+    res.status(400).json({ Message: "Please Enter email and password" });
   } else if (!email || !password) {
-    res.status(200).json({ Message: "Please Enter All the details" });
+    res.status(400).json({ Message: "Please Enter All the details" });
   } else {
     const valid = await User.findOne({
       where: {
@@ -22,7 +22,7 @@ const postlogin = async (req, res) => {
 
     if (!valid) {
       res
-        .status(200)
+        .status(401)
         .json({ message: "Email is not Register, Please Sign Up" });
     } else {
       bcrypt.compare(password, valid.password, async (err, isMatch) => {
@@ -30,7 +30,7 @@ const postlogin = async (req, res) => {
           throw err;
         } else {
           if (!isMatch) {
-            res.status(200).json({ message: "Wrong Email or Password" });
+            res.status(401).json({ message: "Wrong Email or Password" });
           } else {
             const task = await task_details.findAll({
               where: { UserId: valid.id },

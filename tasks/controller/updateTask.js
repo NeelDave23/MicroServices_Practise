@@ -4,7 +4,7 @@ const task_details = db.task_details;
 const updatetask = async (req, res) => {
   const { old_task, new_task } = req.body;
   if (!old_task || !new_task) {
-    res.json({ Message: "Please Enter all the Details" });
+    res.status(400).json({ Message: "Please Enter all the Details" });
   }
   const user = await task_details.findOne({
     where: {
@@ -12,7 +12,7 @@ const updatetask = async (req, res) => {
     },
   });
   if (!user) {
-    res.json({ Message: "Task is Not Present" });
+    res.status(400).json({ Message: "Task is Not Present" });
   } else {
     const user_id = parseInt(req.params.id);
     const tasks = await task_details.update(

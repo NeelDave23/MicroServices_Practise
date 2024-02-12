@@ -4,7 +4,7 @@ const task_details = db.task_details;
 const deletetask = async (req, res) => {
   const { task } = req.body;
   if (!task) {
-    res.status(200).json({ message: "Task Cant Be Empty" });
+    res.status(400).json({ message: "Task Cant Be Empty" });
   } else {
     const id = parseInt(req.params.id);
     for (let i = 0; i < task.length; i++) {
