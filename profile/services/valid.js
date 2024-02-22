@@ -7,17 +7,17 @@ const restrict = async (req, res, next) => {
 
   const token_in_cookies = req.cookies.userData;
   if (!req.cookies.userData) {
-    res.json({ Message: "Please Login or Sign Up First" });
+    res.status(401).json({ Message: "Please Login or Sign Up First" });
   } else {
     try {
       let token = jwt.verify(token_in_cookies, process.env.TOKEN_PASS);
       if (id_in_url === token.user_id) {
         next();
       } else {
-        res.json({ message: "Not a Authorised User." });
+        res.status(401).json({ message: "Not a Authorised User." });
       }
     } catch (err) {
-      res.json({ message: "Not a Authorised User." });
+      res.status(401).json({ message: "Not a Authorised User." });
     }
   }
 };

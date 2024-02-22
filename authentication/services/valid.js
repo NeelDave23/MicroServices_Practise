@@ -8,7 +8,7 @@ const restrict = async (req, res, next) => {
   if (unique_key === process.env.UNIQUE_KEY_ADMIN) {
     next();
   } else {
-    res.json({ message: "Not a Authorised User." });
+    res.status(401).json({ message: "Not a Authorised User." });
   }
 };
 
