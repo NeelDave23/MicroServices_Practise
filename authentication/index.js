@@ -20,19 +20,19 @@ app.get("/users", (req, res) => {
   res.send("Authentication");
 });
 
-const options = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Microservices ",
-      version: "1.0.0",
-    },
-    servers: [{ url: "http://localhost:3002/users/" }],
-  },
-  apis: ["./routes/*.js"],
-};
-const spacs = swaggerjsdoc(options);
-app.use("/api-docs", swaggerui.serve, swaggerui.setup(spacs));
+// const options = {
+//   definition: {
+//     openapi: "3.0.0",
+//     info: {
+//       title: "Microservices ",
+//       version: "1.0.0",
+//     },
+//     servers: [{ url: "http://localhost:8000/users/" }],
+//   },
+//   apis: ["./routes/*.js"],
+// };
+// const spacs = swaggerjsdoc(options);
+// app.use("/api-docs", swaggerui.serve, swaggerui.setup(spacs));
 app.listen(process.env.PORT, () => {
   console.log(` Port :- ${process.env.PORT}`);
 });
