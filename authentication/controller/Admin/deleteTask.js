@@ -12,7 +12,7 @@ const deletetask = async (req, res) => {
     },
   });
   if (!user) {
-    res.status(400).json({
+    res.status(404).json({
       Message: "User Not Found in DB",
     });
   } else {
